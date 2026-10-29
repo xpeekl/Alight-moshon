@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MotionFree - Alight Motion Web Edition</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #0b0e14;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    /* Header */
+    header {
+      background-color: #12171e;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #28e08d;
+    }
+    /* Main Layout */
+    .app-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Canvas / Preview Container */
+    .preview-container {
+      flex: 1;
+      background-color: #181f2a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 10px;
+    }
+    .canvas-wrapper {
+      position: relative;
+      background-color: #000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    /* Timeline / Controls Section */
+    .controls-panel {
+      background-color: #12171e;
+      border-top: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 14px;
+      gap: 10px;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .time-display {
+      font-family: monospace;
+      font-size: 14px;
+      color: #a0aec0;
+    }
+    .btn {
+      background: #1f2937;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #28e08d;
+      color: #000;
+    }
+    .btn-icon {
+      padding: 8px;
+      border-radius: 50%;
+    }
+    /* Timeline Scrub Bar */
+    .scrubber-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="range"] {
+      flex: 1;
+      accent-color: #28e08d;
+    }
+    /* Slow Motion Panel */
+    .speed-panel {
+      background: #181f2a;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .speed-label {
+      font-size: 12px;
+      color: #28e08d;
+      font-weight: bold;
+    }
+    .speed-options {
+      display: flex;
+      gap: 6px;
+    }
+    .speed-btn {
+      background: #232d3d;
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .speed-btn.active {
+      background: #28e08d;
+      color: #000;
+      border-color: #28e08d;
+    }
+    /* Floating Add Button */
+    .fab {
+      position: absolute;
+      bottom: 120px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #28e08d;
+      color: #000;
+      font-size: 28px;
+      border: none;
+      box-shadow: 0 4px 16px rgba(40, 224, 141, 0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      MotionFree
+    </div>
+    <button class="btn btn-primary" id="exportBtn">Exportar MP4</button>
+  </header>
+
+  <div class="app-body">
+    <div class="preview-container">
+      <div class="canvas-wrapper" id="canvasWrapper" style="width: 270px; height: 480px;">
+        <canvas id="mainCanvas" width="1080" height="1920"></canvas>
+      </div>
+    </div>
+
+    <button class="fab" id="addBtn">+</button>
+
+    <div class="controls-panel">
+      <!-- Speed / Slow Motion Control -->
+      <div class="speed-panel">
+        <span class="speed-label">Cámara Lenta / Velocidad:</span>
+        <div class="speed-options">
+          <button class="speed-btn active" data-speed="0.25">0.25x</button>
+          <button class="speed-btn" data-speed="0.5">0.5x</button>
+          <button class="speed-btn" data-speed="1.0">1.0x</button>
+          <button class="speed-btn" data-speed="2.0">2.0x</button>
+        </div>
+      </div>
+
+      <!-- Scrubber -->
+      <div class="scrubber-container">
+        <input type="range" id="timeSlider" min="0" max="10" step="0.01" value="0" />
+        <span class="time-display" id="timeDisplay">00:00.00</span>
+      </div>
+
+      <!-- Playback toolbar -->
+      <div class="toolbar">
+        <button class="btn" id="keyframeBtn">◆ Keyframe</button>
+        <button class="btn btn-primary" id="playBtn">▶ Reproducir</button>
+        <button class="btn" id="addVideoBtn">📁 Vídeo</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="videoInput" accept="video/*" style="display: none;" />
+
+  <script>
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('playBtn');
+    const timeSlider = document.getElementById('timeSlider');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const videoInput = document.getElementById('videoInput');
+    const addVideoBtn = document.getElementById('addVideoBtn');
+    
+    let isPlaying = false;
+    let currentTime = 0;
+    let duration = 10;
+    let currentSpeed = 0.25;
+    let videoElement = null;
+
+    // Manejo de Cámara Lenta
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentSpeed = parseFloat(e.target.dataset.speed);
+        if (videoElement) {
+          videoElement.playbackRate = currentSpeed;
+        }
+      });
+    });
+
+    // Cargar vídeo del dispositivo
+    addVideoBtn.addEventListener('click', () => videoInput.click());
+
+    videoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        videoElement = document.createElement('video');
+        videoElement.src = url;
+        videoElement.loop = true;
+        videoElement.muted = true;
+        videoElement.playbackRate = currentSpeed;
+        videoElement.onloadedmetadata = () => {
+          duration = videoElement.duration;
+          timeSlider.max = duration;
+        };
+      }
+    });
+
+    // Loop de renderizado en tiempo real (60 FPS)
+    function render() {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (videoElement && videoElement.readyState >= 2) {
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      } else {
+        // Objeto de muestra animado
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((currentTime * currentSpeed) % (Math.PI * 2));
+        ctx.fillStyle = '#28e08d';
+        ctx.fillRect(-150, -150, 300, 300);
+        ctx.restore();
+      }
+
+      // Animación de tiempo
+      if (isPlaying) {
+        currentTime += 0.016 * currentSpeed;
+        if (currentTime > duration) currentTime = 0;
+        timeSlider.value = currentTime;
+        updateDisplay();
+        if (videoElement) videoElement.currentTime = currentTime;
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    function updateDisplay() {
+      const sec = Math.floor(currentTime);
+      const ms = Math.floor((currentTime % 1) * 100);
+      timeDisplay.textContent = `00:${sec < 10 ? '0' : ''}${sec}.${ms < 10 ? '0' : ''}${ms}`;
+    }
+
+    playBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      playBtn.textContent = isPlaying ? '❚❚ Pausa' : '▶ Reproducir';
+      if (videoElement) {
+        if (isPlaying) videoElement.play();
+        else videoElement.pause();
+      }
+    });
+
+    timeSlider.addEventListener('input', (e) => {
+      currentTime = parseFloat(e.target.value);
+      updateDisplay();
+      if (videoElement) videoElement.currentTime = currentTime;
+    });
+
+    render();
+  </script>
+</body>
+</html>
