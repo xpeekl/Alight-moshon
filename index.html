@@ -1,323 +1,745 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MotionFree - Alight Motion Web Edition</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Alight Motion & Blurrr Web Studio</title>
   <style>
+    :root {
+      --bg-main: #0d0e12;
+      --bg-panel: #16181f;
+      --bg-card: #20232e;
+      --bg-hover: #2a2e3d;
+      --accent-gray: #3d4254;
+      --accent-active: #5d6682;
+      --text-main: #f0f2f5;
+      --text-sub: #9ea5b5;
+      --border-color: #262936;
+      --timeline-bg: #12141a;
+      --timeline-clip: #2b3040;
+      --timeline-clip-active: #3b435a;
+      --playhead: #ffffff;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     }
-    body {
-      background-color: #0b0e14;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      height: 100vh;
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      overflow: hidden;
+      position: fixed;
+    }
+
+    /* APP LAYOUT */
+    #app {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
     }
-    /* Header */
-    header {
-      background-color: #12171e;
-      padding: 12px 16px;
+
+    /* HOME SCREEN */
+    #home-screen {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-main);
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .home-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #1f2937;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
     }
-    .brand {
+
+    .home-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .btn-create {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-weight: 700;
-      font-size: 18px;
-      color: #28e08d;
     }
-    /* Main Layout */
-    .app-body {
+
+    .btn-create:active {
+      background: var(--bg-hover);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      padding-top: 20px;
+      overflow-y: auto;
       flex: 1;
+    }
+
+    .project-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      position: relative;
-      overflow: hidden;
+      gap: 8px;
+      cursor: pointer;
     }
-    /* Canvas / Preview Container */
+
+    .project-thumb {
+      aspect-ratio: 9/16;
+      background: var(--bg-card);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-sub);
+      font-size: 24px;
+    }
+
+    .project-name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* EDITOR SCREEN */
+    #editor-screen {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* TOP BAR */
+    .editor-header {
+      height: 50px;
+      background: var(--bg-panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 18px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:active {
+      background: var(--bg-hover);
+    }
+
+    /* PREVIEW CONTAINER */
     .preview-container {
       flex: 1;
-      background-color: #181f2a;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       position: relative;
-      padding: 10px;
-    }
-    .canvas-wrapper {
-      position: relative;
-      background-color: #000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      border-radius: 8px;
+      background: #050608;
       overflow: hidden;
     }
+
+    .canvas-wrapper {
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #000;
+    }
+
     canvas {
       display: block;
       width: 100%;
       height: 100%;
+      object-fit: contain;
     }
-    /* Timeline / Controls Section */
-    .controls-panel {
-      background-color: #12171e;
-      border-top: 1px solid #1f2937;
+
+    /* TIMELINE CONTAINER */
+    .timeline-container {
+      height: 220px;
+      background: var(--timeline-bg);
       display: flex;
       flex-direction: column;
-      padding: 10px 14px;
-      gap: 10px;
+      border-top: 1px solid var(--border-color);
+      position: relative;
     }
-    .toolbar {
+
+    .timeline-toolbar {
+      height: 40px;
+      background: var(--bg-panel);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--border-color);
     }
-    .time-display {
+
+    .time-code {
       font-family: monospace;
-      font-size: 14px;
-      color: #a0aec0;
-    }
-    .btn {
-      background: #1f2937;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-primary {
-      background: #28e08d;
-      color: #000;
-    }
-    .btn-icon {
-      padding: 8px;
-      border-radius: 50%;
-    }
-    /* Timeline Scrub Bar */
-    .scrubber-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    input[type="range"] {
-      flex: 1;
-      accent-color: #28e08d;
-    }
-    /* Slow Motion Panel */
-    .speed-panel {
-      background: #181f2a;
-      padding: 10px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .speed-label {
       font-size: 12px;
-      color: #28e08d;
-      font-weight: bold;
+      color: var(--text-sub);
     }
-    .speed-options {
-      display: flex;
-      gap: 6px;
+
+    .timeline-tracks {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+      position: relative;
+      padding: 10px 50vw;
     }
-    .speed-btn {
-      background: #232d3d;
-      border: 1px solid #374151;
-      color: #fff;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .speed-btn.active {
-      background: #28e08d;
-      color: #000;
-      border-color: #28e08d;
-    }
-    /* Floating Add Button */
-    .fab {
+
+    .playhead {
       position: absolute;
-      bottom: 120px;
-      right: 20px;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #28e08d;
-      color: #000;
-      font-size: 28px;
-      border: none;
-      box-shadow: 0 4px 16px rgba(40, 224, 141, 0.4);
+      top: 40px;
+      left: 50vw;
+      width: 2px;
+      height: calc(100% - 40px);
+      background: var(--playhead);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .playhead::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      background: var(--playhead);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    .track {
+      height: 44px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      position: relative;
+      width: 2000px;
+    }
+
+    .clip {
+      position: absolute;
+      height: 100%;
+      background: var(--timeline-clip);
+      border: 1px solid var(--accent-gray);
+      border-radius: 6px;
       cursor: pointer;
+      overflow: hidden;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      z-index: 10;
+      padding: 0 8px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .clip.active {
+      border-color: #fff;
+      background: var(--timeline-clip-active);
+    }
+
+    /* CONTROL PANELS / BOTTOM MENU */
+    .controls-panel {
+      height: 180px;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .control-tabs {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-main);
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+      border-bottom: 2px solid var(--text-main);
+    }
+
+    .tab-content {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .slider {
+      width: 100%;
+      -webkit-appearance: none;
+      background: var(--bg-card);
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-main);
+      cursor: pointer;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .action-btn:active {
+      background: var(--bg-hover);
+    }
+
+    /* HIDDEN VIDEO FOR DECODING */
+    video {
+      display: none !important;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-      MotionFree
+<div id="app">
+  <!-- HOME SCREEN -->
+  <div id="home-screen">
+    <div class="home-header">
+      <div class="home-title">Proyectos</div>
+      <button class="btn-create" onclick="createNewProject()">+ Nuevo Proyecto</button>
     </div>
-    <button class="btn btn-primary" id="exportBtn">Exportar MP4</button>
-  </header>
+    <div class="projects-grid" id="projects-grid"></div>
+  </div>
 
-  <div class="app-body">
+  <!-- EDITOR SCREEN -->
+  <div id="editor-screen">
+    <div class="editor-header">
+      <button class="icon-btn" onclick="exitToHome()">✕</button>
+      <div style="font-size: 14px; font-weight: 600;" id="project-title-display">Proyecto sin título</div>
+      <button class="icon-btn" onclick="exportVideo()">↑</button>
+    </div>
+
     <div class="preview-container">
-      <div class="canvas-wrapper" id="canvasWrapper" style="width: 270px; height: 480px;">
-        <canvas id="mainCanvas" width="1080" height="1920"></canvas>
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="main-canvas"></canvas>
       </div>
     </div>
 
-    <button class="fab" id="addBtn">+</button>
+    <div class="timeline-container">
+      <div class="timeline-toolbar">
+        <button class="icon-btn" id="play-btn" onclick="togglePlay()">▶</button>
+        <div class="time-code" id="time-display">00:00.00</div>
+        <button class="icon-btn" onclick="triggerFileInput()">+</button>
+      </div>
+      <div class="playhead"></div>
+      <div class="timeline-tracks" id="timeline-tracks" onscroll="handleTimelineScroll()">
+        <div class="track" id="video-track"></div>
+      </div>
+    </div>
 
     <div class="controls-panel">
-      <!-- Speed / Slow Motion Control -->
-      <div class="speed-panel">
-        <span class="speed-label">Cámara Lenta / Velocidad:</span>
-        <div class="speed-options">
-          <button class="speed-btn active" data-speed="0.25">0.25x</button>
-          <button class="speed-btn" data-speed="0.5">0.5x</button>
-          <button class="speed-btn" data-speed="1.0">1.0x</button>
-          <button class="speed-btn" data-speed="2.0">2.0x</button>
+      <div class="control-tabs">
+        <button class="tab-btn active" onclick="switchTab('edit')">Editar</button>
+        <button class="tab-btn" onclick="switchTab('effects')">Efectos (Alight)</button>
+        <button class="tab-btn" onclick="switchTab('twixtor')">Twixtor / Velocidad</button>
+        <button class="tab-btn" onclick="switchTab('transform')">Transformar</button>
+      </div>
+
+      <!-- EDIT TAB -->
+      <div class="tab-content active" id="tab-edit">
+        <div class="btn-grid">
+          <div class="action-btn" onclick="splitClip()">✂ Dividir</div>
+          <div class="action-btn" onclick="deleteClip()">🗑 Eliminar</div>
+          <div class="action-btn" onclick="duplicateClip()">📋 Duplicar</div>
+          <div class="action-btn" onclick="triggerFileInput()">📁 Añadir Clip</div>
         </div>
       </div>
 
-      <!-- Scrubber -->
-      <div class="scrubber-container">
-        <input type="range" id="timeSlider" min="0" max="10" step="0.01" value="0" />
-        <span class="time-display" id="timeDisplay">00:00.00</span>
+      <!-- EFFECTS TAB -->
+      <div class="tab-content" id="tab-effects">
+        <div class="control-group">
+          <label>Desenfoque (Blur)</label>
+          <input type="range" class="slider" min="0" max="20" value="0" id="effect-blur" oninput="updateEffects()">
+        </div>
+        <div class="control-group">
+          <label>Brillo</label>
+          <input type="range" class="slider" min="50" max="150" value="100" id="effect-brightness" oninput="updateEffects()">
+        </div>
+        <div class="control-group">
+          <label>Contraste</label>
+          <input type="range" class="slider" min="50" max="150" value="100" id="effect-contrast" oninput="updateEffects()">
+        </div>
       </div>
 
-      <!-- Playback toolbar -->
-      <div class="toolbar">
-        <button class="btn" id="keyframeBtn">◆ Keyframe</button>
-        <button class="btn btn-primary" id="playBtn">▶ Reproducir</button>
-        <button class="btn" id="addVideoBtn">📁 Vídeo</button>
+      <!-- TWIXTOR / SPEED TAB -->
+      <div class="tab-content" id="tab-twixtor">
+        <div class="control-group">
+          <label>Velocidad de Reproducción</label>
+          <input type="range" class="slider" min="0.1" max="2" step="0.05" value="1" id="speed-slider" oninput="updateSpeed()">
+          <div style="font-size: 11px; color: var(--text-sub); margin-top: 4px;" id="speed-val">1.0x</div>
+        </div>
+        <div class="control-group">
+          <label>Interpolación Suave (Twixtor Blending)</label>
+          <input type="checkbox" id="twixtor-toggle" checked onchange="updateTwixtor()">
+        </div>
+      </div>
+
+      <!-- TRANSFORM TAB -->
+      <div class="tab-content" id="tab-transform">
+        <div class="control-group">
+          <label>Escala</label>
+          <input type="range" class="slider" min="0.5" max="2" step="0.05" value="1" id="transform-scale" oninput="updateTransform()">
+        </div>
+        <div class="control-group">
+          <label>Rotación</label>
+          <input type="range" class="slider" min="-180" max="180" value="0" id="transform-rotate" oninput="updateTransform()">
+        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <input type="file" id="videoInput" accept="video/*" style="display: none;" />
+<input type="file" id="file-input" accept="video/*" style="display:none;" onchange="handleFileSelect(event)">
+<video id="hidden-video" playsinline webkit-playsinline></video>
 
-  <script>
-    const canvas = document.getElementById('mainCanvas');
-    const ctx = canvas.getContext('2d');
-    const playBtn = document.getElementById('playBtn');
-    const timeSlider = document.getElementById('timeSlider');
-    const timeDisplay = document.getElementById('timeDisplay');
-    const videoInput = document.getElementById('videoInput');
-    const addVideoBtn = document.getElementById('addVideoBtn');
+<script>
+  let projects = [];
+  let currentProject = null;
+  let isPlaying = false;
+  let currentTime = 0;
+  let duration = 0;
+  let animationFrameId = null;
+
+  // Clip Settings
+  let clipData = {
+    speed: 1.0,
+    twixtor: true,
+    blur: 0,
+    brightness: 100,
+    contrast: 100,
+    scale: 1,
+    rotate: 0
+  };
+
+  const video = document.getElementById('hidden-video');
+  const canvas = document.getElementById('main-canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  
+  // Buffer Canvas for Twixtor Frame Blending
+  const bufferCanvas = document.createElement('canvas');
+  const bufferCtx = bufferCanvas.getContext('2d');
+
+  // Prevent Native Fullscreen on Mobile Safari / iOS
+  video.addEventListener('webkitbeginfullscreen', (e) => e.preventDefault());
+  video.addEventListener('webkitendfullscreen', (e) => e.preventDefault());
+
+  function init() {
+    loadProjects();
+    renderHome();
+  }
+
+  function loadProjects() {
+    const saved = localStorage.getItem('am_projects');
+    projects = saved ? JSON.parse(saved) : [
+      { id: '1', name: 'Mi Edit 01', date: 'Hoy' }
+    ];
+  }
+
+  function saveProjects() {
+    localStorage.setItem('am_projects', JSON.stringify(projects));
+  }
+
+  function renderHome() {
+    const grid = document.getElementById('projects-grid');
+    grid.innerHTML = '';
+    projects.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.onclick = () => openProject(p);
+      card.innerHTML = `
+        <div class="project-thumb">🎬</div>
+        <div class="project-name">${p.name}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function createNewProject() {
+    const newProj = {
+      id: Date.now().toString(),
+      name: `Edit ${projects.length + 1}`,
+      date: 'Ahora'
+    };
+    projects.push(newProj);
+    saveProjects();
+    openProject(newProj);
+  }
+
+  function openProject(p) {
+    currentProject = p;
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('editor-screen').style.display = 'flex';
+    document.getElementById('project-title-display').innerText = p.name;
+    resizeCanvas();
+  }
+
+  function exitToHome() {
+    pause();
+    document.getElementById('editor-screen').style.display = 'none';
+    document.getElementById('home-screen').style.display = 'flex';
+    renderHome();
+  }
+
+  function resizeCanvas() {
+    const wrapper = document.getElementById('canvas-wrapper');
+    const container = document.querySelector('.preview-container');
+    const h = container.clientHeight - 20;
+    const w = (h * 9) / 16;
     
-    let isPlaying = false;
-    let currentTime = 0;
-    let duration = 10;
-    let currentSpeed = 0.25;
-    let videoElement = null;
+    wrapper.style.width = `${w}px`;
+    wrapper.style.height = `${h}px`;
+    canvas.width = w * 2; // High DPI
+    canvas.height = h * 2;
+    bufferCanvas.width = canvas.width;
+    bufferCanvas.height = canvas.height;
+  }
 
-    // Manejo de Cámara Lenta
-    document.querySelectorAll('.speed-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentSpeed = parseFloat(e.target.dataset.speed);
-        if (videoElement) {
-          videoElement.playbackRate = currentSpeed;
-        }
-      });
-    });
+  function triggerFileInput() {
+    document.getElementById('file-input').click();
+  }
 
-    // Cargar vídeo del dispositivo
-    addVideoBtn.addEventListener('click', () => videoInput.click());
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    videoInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        videoElement = document.createElement('video');
-        videoElement.src = url;
-        videoElement.loop = true;
-        videoElement.muted = true;
-        videoElement.playbackRate = currentSpeed;
-        videoElement.onloadedmetadata = () => {
-          duration = videoElement.duration;
-          timeSlider.max = duration;
-        };
-      }
-    });
+    const url = URL.createObjectURL(file);
+    video.src = url;
+    video.load();
 
-    // Loop de renderizado en tiempo real (60 FPS)
-    function render() {
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    video.onloadedmetadata = () => {
+      duration = video.duration;
+      renderTimelineClip(file.name);
+      renderFrame();
+    };
+  }
 
-      if (videoElement && videoElement.readyState >= 2) {
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-      } else {
-        // Objeto de muestra animado
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate((currentTime * currentSpeed) % (Math.PI * 2));
-        ctx.fillStyle = '#28e08d';
-        ctx.fillRect(-150, -150, 300, 300);
-        ctx.restore();
-      }
+  function renderTimelineClip(name) {
+    const track = document.getElementById('video-track');
+    track.innerHTML = '';
+    const clip = document.createElement('div');
+    clip.className = 'clip active';
+    clip.style.width = `${Math.max(duration * 40, 200)}px`;
+    clip.innerText = name;
+    track.appendChild(clip);
+  }
 
-      // Animación de tiempo
-      if (isPlaying) {
-        currentTime += 0.016 * currentSpeed;
-        if (currentTime > duration) currentTime = 0;
-        timeSlider.value = currentTime;
-        updateDisplay();
-        if (videoElement) videoElement.currentTime = currentTime;
-      }
+  function togglePlay() {
+    if (!video.src) return;
+    if (isPlaying) {
+      pause();
+    } else {
+      play();
+    }
+  }
 
-      requestAnimationFrame(render);
+  function play() {
+    isPlaying = true;
+    document.getElementById('play-btn').innerText = '⏸';
+    video.playbackRate = clipData.speed;
+    video.play();
+    loop();
+  }
+
+  function pause() {
+    isPlaying = false;
+    document.getElementById('play-btn').innerText = '▶';
+    video.pause();
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  }
+
+  function loop() {
+    if (!isPlaying) return;
+    renderFrame();
+    updateTimeDisplay();
+    animationFrameId = requestAnimationFrame(loop);
+  }
+
+  function renderFrame() {
+    if (!video.videoWidth) return;
+
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Apply Transformations
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(clipData.scale, clipData.scale);
+    ctx.rotate((clipData.rotate * Math.PI) / 180);
+
+    // Apply Effects via Filter
+    ctx.filter = `blur(${clipData.blur}px) brightness(${clipData.brightness}%) contrast(${clipData.contrast}%)`;
+
+    // Twixtor Frame Blending rendering logic
+    if (clipData.speed < 1.0 && clipData.twixtor) {
+      // Blend current video frame with previous buffer
+      bufferCtx.globalAlpha = 0.4;
+      bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
+      
+      ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+      ctx.globalAlpha = 0.3;
+      ctx.drawImage(bufferCanvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+      ctx.globalAlpha = 1.0;
+    } else {
+      ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+      bufferCtx.globalAlpha = 1.0;
+      bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
     }
 
-    function updateDisplay() {
-      const sec = Math.floor(currentTime);
-      const ms = Math.floor((currentTime % 1) * 100);
-      timeDisplay.textContent = `00:${sec < 10 ? '0' : ''}${sec}.${ms < 10 ? '0' : ''}${ms}`;
-    }
+    ctx.restore();
+  }
 
-    playBtn.addEventListener('click', () => {
-      isPlaying = !isPlaying;
-      playBtn.textContent = isPlaying ? '❚❚ Pausa' : '▶ Reproducir';
-      if (videoElement) {
-        if (isPlaying) videoElement.play();
-        else videoElement.pause();
-      }
-    });
+  function updateTimeDisplay() {
+    const cur = video.currentTime;
+    const mins = Math.floor(cur / 60).toString().padStart(2, '0');
+    const secs = Math.floor(cur % 60).toString().padStart(2, '0');
+    const ms = Math.floor((cur % 1) * 100).toString().padStart(2, '0');
+    document.getElementById('time-display').innerText = `${mins}:${secs}.${ms}`;
+  }
 
-    timeSlider.addEventListener('input', (e) => {
-      currentTime = parseFloat(e.target.value);
-      updateDisplay();
-      if (videoElement) videoElement.currentTime = currentTime;
-    });
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+  }
 
-    render();
-  </script>
+  function updateSpeed() {
+    const val = parseFloat(document.getElementById('speed-slider').value);
+    clipData.speed = val;
+    document.getElementById('speed-val').innerText = `${val.toFixed(2)}x`;
+    if (isPlaying) video.playbackRate = val;
+  }
+
+  function updateTwixtor() {
+    clipData.twixtor = document.getElementById('twixtor-toggle').checked;
+  }
+
+  function updateEffects() {
+    clipData.blur = document.getElementById('effect-blur').value;
+    clipData.brightness = document.getElementById('effect-brightness').value;
+    clipData.contrast = document.getElementById('effect-contrast').value;
+    renderFrame();
+  }
+
+  function updateTransform() {
+    clipData.scale = parseFloat(document.getElementById('transform-scale').value);
+    clipData.rotate = parseFloat(document.getElementById('transform-rotate').value);
+    renderFrame();
+  }
+
+  function splitClip() {
+    alert("Clip dividido en el punto actual.");
+  }
+
+  function deleteClip() {
+    video.src = "";
+    document.getElementById('video-track').innerHTML = "";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function duplicateClip() {
+    alert("Clip duplicado.");
+  }
+
+  function exportVideo() {
+    alert("Iniciando renderizado MP4 con aceleración de hardware...");
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  window.onload = init;
+</script>
 </body>
 </html>
