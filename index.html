@@ -318,7 +318,7 @@
       object-fit: contain;
     }
 
-    /* CONTROLES FLOTANTES / WAYPOINTS ALIGHT MOTION */
+    /* WAYPOINTS / KEYFRAMES */
     .waypoint-bar {
       position: absolute;
       right: 12px;
@@ -354,6 +354,7 @@
       color: #000;
     }
 
+    /* TIMELINE CONTAINER & SECTOR */
     .timeline-container {
       height: 190px;
       background: var(--timeline-bg);
@@ -382,10 +383,10 @@
     .timeline-tracks {
       flex: 1;
       overflow-x: auto;
-      overflow-y: auto;
+      overflow-y: hidden;
       position: relative;
       padding: 10px 0;
-      cursor: pointer;
+      touch-action: none;
     }
 
     .playhead-line {
@@ -395,7 +396,7 @@
       left: 0px;
       width: 2px;
       background: var(--playhead);
-      z-index: 20;
+      z-index: 30;
       pointer-events: none;
     }
 
@@ -416,7 +417,8 @@
       border-radius: 4px;
       margin-bottom: 6px;
       position: relative;
-      width: 2000px;
+      width: 100%;
+      min-width: 100%;
     }
 
     .clip {
@@ -641,7 +643,6 @@
         <canvas id="main-canvas"></canvas>
       </div>
 
-      <!-- BOTÓN DE KEYFRAMES / WAYPOINTS ESTILO ALIGHT MOTION -->
       <div class="waypoint-bar">
         <button class="waypoint-btn" onclick="addWaypoint()" title="Añadir Keyframe">◆</button>
       </div>
@@ -653,7 +654,7 @@
         <div class="time-code" id="time-display">00:00.00</div>
         <button class="icon-btn" onclick="triggerFileInput()">+ MEDIA</button>
       </div>
-      <div class="timeline-tracks" id="timeline-tracks" onclick="seekTimeline(event)">
+      <div class="timeline-tracks" id="timeline-tracks">
         <div class="playhead-line" id="playhead-line"></div>
         <div class="track" id="video-track"></div>
         <div class="track" id="audio-track"></div>
@@ -731,7 +732,7 @@
   <div class="floating-add-btn" onclick="openCreateModal()">+</div>
 </div>
 
-<input type="file" id="file-input" accept="video/*" style="display:none;" onchange="handleFileSelect(event)">
+<input type="file" id="file-input" accept="video/*,image/*" style="display:none;" onchange="handleFileSelect(event)">
 <video id="hidden-video" playsinline webkit-playsinline></video>
 
 <script>
@@ -744,8 +745,9 @@
   let hasVideoLoaded = false;
   let hasAudioExtracted = false;
   let currentRatio = '16:9';
-  let selectedElement = null; // 'video', 'audio' o índice de forma
+  let selectedElement = null;
   let keyframes = [];
+  let isDraggingTimeline = false;
 
   let clipData = {
     speed: 1.0,
@@ -763,6 +765,7 @@
   
   const bufferCanvas = document.createElement('canvas');
   const bufferCtx = bufferCanvas.getContext('2d');
+  const timelineTracks = document.getElementById('timeline-tracks');
 
   video.addEventListener('webkitbeginfullscreen', (e) => e.preventDefault());
   video.addEventListener('webkitendfullscreen', (e) => e.preventDefault());
@@ -770,6 +773,35 @@
   function init() {
     loadProjects();
     renderHome();
+    setupTimelineEvents();
+  }
+
+  function setupTimelineEvents() {
+    timelineTracks.addEventListener('pointerdown', (e) => {
+      isDraggingTimeline = true;
+      handleSeek(e);
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (isDraggingTimeline) {
+        handleSeek(e);
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDraggingTimeline = false;
+    });
+  }
+
+  function handleSeek(e) {
+    if (!hasVideoLoaded || !duration) return;
+    const rect = timelineTracks.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const percentage = clickX / rect.width;
+    video.currentTime = percentage * duration;
+    updateTimeDisplay();
+    updatePlayheadPosition();
+    renderFrame();
   }
 
   function loadProjects() {
@@ -885,7 +917,7 @@
     if (hasVideoLoaded) {
       const clip = document.createElement('div');
       clip.className = `clip ${selectedElement === 'video' ? 'active' : ''}`;
-      clip.style.width = `${Math.max(duration * 40, 200)}px`;
+      clip.style.width = `100%`;
       clip.innerText = "Video Clip";
       clip.onclick = (ev) => { ev.stopPropagation(); selectElement('video'); };
       videoTrack.appendChild(clip);
@@ -896,7 +928,7 @@
     if (hasAudioExtracted) {
       const aClip = document.createElement('div');
       aClip.className = `clip ${selectedElement === 'audio' ? 'active' : ''}`;
-      aClip.style.width = `${Math.max(duration * 40, 200)}px`;
+      aClip.style.width = `100%`;
       aClip.innerText = "Pista de Audio";
       aClip.onclick = (ev) => { ev.stopPropagation(); selectElement('audio'); };
       audioTrack.appendChild(aClip);
@@ -907,8 +939,8 @@
     shapes.forEach((s, idx) => {
       const sClip = document.createElement('div');
       sClip.className = `clip ${selectedElement === idx ? 'active' : ''}`;
-      sClip.style.width = `150px`;
-      sClip.style.left = `${idx * 160}px`;
+      sClip.style.width = `120px`;
+      sClip.style.left = `${idx * 130}px`;
       sClip.innerText = s.type.toUpperCase();
       sClip.onclick = (ev) => { ev.stopPropagation(); selectElement(idx); };
       shapesTrack.appendChild(sClip);
@@ -952,23 +984,11 @@
     animationFrameId = requestAnimationFrame(loop);
   }
 
-  function seekTimeline(e) {
-    if (!hasVideoLoaded || duration === 0) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const totalWidth = 2000;
-    const percentage = Math.max(0, Math.min(1, clickX / totalWidth));
-    video.currentTime = percentage * duration;
-    renderFrame();
-    updateTimeDisplay();
-    updatePlayheadPosition();
-  }
-
   function updatePlayheadPosition() {
-    if (!hasVideoLoaded || duration === 0) return;
-    const totalWidth = 2000;
+    if (!hasVideoLoaded || !duration) return;
+    const rect = timelineTracks.getBoundingClientRect();
     const percentage = video.currentTime / duration;
-    const playheadX = percentage * totalWidth;
+    const playheadX = percentage * rect.width;
     document.getElementById('playhead-line').style.left = `${playheadX}px`;
   }
 
@@ -1056,17 +1076,12 @@
   function addWaypoint() {
     if (!hasVideoLoaded) return;
     keyframes.push({ time: video.currentTime, scale: clipData.scale, rotate: clipData.rotate });
-    alert(`Keyframe (Waypoint) añadido en el segundo ${video.currentTime.toFixed(2)}s`);
   }
 
   function extractAudio() {
-    if (!hasVideoLoaded) {
-      alert("Carga un video primero para extraer su audio.");
-      return;
-    }
+    if (!hasVideoLoaded) return;
     hasAudioExtracted = true;
     renderTimelineClips();
-    alert("Audio extraído con éxito en una pista independiente.");
   }
 
   function addShape(type) {
@@ -1081,13 +1096,7 @@
     renderFrame();
   }
 
-  function splitClip() { 
-    if (selectedElement === 'video') {
-      alert("Clip de video separado en la línea de tiempo."); 
-    } else {
-      alert("Selecciona un elemento para separar.");
-    }
-  }
+  function splitClip() {}
 
   function deleteSelectedElement() {
     if (selectedElement === 'video') {
@@ -1103,26 +1112,19 @@
       shapes.splice(selectedElement, 1);
       selectedElement = null;
       renderFrame();
-    } else {
-      alert("Selecciona un elemento en la línea de tiempo para eliminar.");
     }
     renderTimelineClips();
   }
 
-  function duplicateClip() { 
-    if (selectedElement === 'video') {
-      alert("Clip de video duplicado en la pista.");
-    } else if (typeof selectedElement === 'number') {
-      const duplicated = { ...shapes[selectedElement] };
-      shapes.push(duplicated);
+  function duplicateClip() {
+    if (typeof selectedElement === 'number') {
+      shapes.push({ ...shapes[selectedElement] });
       selectElement(shapes.length - 1);
       renderFrame();
-    } else {
-      alert("Selecciona un clip o forma para duplicar.");
     }
   }
 
-  function exportVideo() { alert("Generando renderizado MP4 acelerado por hardware..."); }
+  function exportVideo() {}
 
   window.addEventListener('resize', resizeCanvas);
   window.onload = init;
