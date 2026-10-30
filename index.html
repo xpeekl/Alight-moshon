@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Alight Motion & Blurrr Web Studio</title>
+  <title>MotionFree Pro - Studio</title>
   <style>
     :root {
-      --bg-main: #0d0e12;
-      --bg-panel: #16181f;
-      --bg-card: #20232e;
-      --bg-hover: #2a2e3d;
-      --accent-gray: #3d4254;
-      --accent-active: #5d6682;
-      --text-main: #f0f2f5;
-      --text-sub: #9ea5b5;
-      --border-color: #262936;
-      --timeline-bg: #12141a;
-      --timeline-clip: #2b3040;
-      --timeline-clip-active: #3b435a;
+      --bg-main: #0c0d10;
+      --bg-panel: #14161d;
+      --bg-card: #1c1f2b;
+      --bg-hover: #262a3a;
+      --accent-blue: #3b82f6;
+      --accent-gray: #374151;
+      --text-main: #f3f4f6;
+      --text-sub: #9ca3af;
+      --border-color: #222634;
+      --timeline-bg: #101218;
+      --timeline-clip: #252a3b;
+      --timeline-clip-active: #3b82f6;
       --playhead: #ffffff;
     }
 
@@ -28,7 +28,7 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     }
 
     body, html {
@@ -40,7 +40,6 @@
       position: fixed;
     }
 
-    /* APP LAYOUT */
     #app {
       display: flex;
       flex-direction: column;
@@ -64,38 +63,31 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 20px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--border-color);
     }
 
     .home-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
     .btn-create {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
       padding: 10px 18px;
-      border-radius: 20px;
+      border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-create:active {
-      background: var(--bg-hover);
     }
 
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 14px;
       padding-top: 20px;
       overflow-y: auto;
       flex: 1;
@@ -104,8 +96,8 @@
     .project-card {
       background: var(--bg-panel);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 12px;
+      border-radius: 10px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -115,16 +107,19 @@
     .project-thumb {
       aspect-ratio: 9/16;
       background: var(--bg-card);
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-sub);
-      font-size: 24px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .project-name {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
@@ -140,14 +135,13 @@
       position: relative;
     }
 
-    /* TOP BAR */
     .editor-header {
-      height: 50px;
+      height: 46px;
       background: var(--bg-panel);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 14px;
       border-bottom: 1px solid var(--border-color);
     }
 
@@ -155,14 +149,11 @@
       background: transparent;
       border: none;
       color: var(--text-main);
-      font-size: 18px;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 6px;
     }
 
     .icon-btn:active {
@@ -176,14 +167,14 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      background: #050608;
+      background: #000;
       overflow: hidden;
     }
 
     .canvas-wrapper {
       position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      border-radius: 4px;
       overflow: hidden;
       background: #000;
     }
@@ -197,7 +188,7 @@
 
     /* TIMELINE CONTAINER */
     .timeline-container {
-      height: 220px;
+      height: 200px;
       background: var(--timeline-bg);
       display: flex;
       flex-direction: column;
@@ -206,7 +197,7 @@
     }
 
     .timeline-toolbar {
-      height: 40px;
+      height: 38px;
       background: var(--bg-panel);
       display: flex;
       align-items: center;
@@ -217,7 +208,7 @@
 
     .time-code {
       font-family: monospace;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-sub);
     }
 
@@ -231,10 +222,10 @@
 
     .playhead {
       position: absolute;
-      top: 40px;
+      top: 38px;
       left: 50vw;
       width: 2px;
-      height: calc(100% - 40px);
+      height: calc(100% - 38px);
       background: var(--playhead);
       z-index: 10;
       pointer-events: none;
@@ -246,15 +237,15 @@
       top: 0;
       left: -4px;
       width: 10px;
-      height: 10px;
+      height: 8px;
       background: var(--playhead);
       clip-path: polygon(0 0, 100% 0, 50% 100%);
     }
 
     .track {
-      height: 44px;
+      height: 40px;
       background: rgba(255,255,255,0.02);
-      border-radius: 6px;
+      border-radius: 4px;
       margin-bottom: 6px;
       position: relative;
       width: 2000px;
@@ -264,8 +255,8 @@
       position: absolute;
       height: 100%;
       background: var(--timeline-clip);
-      border: 1px solid var(--accent-gray);
-      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
       cursor: pointer;
       overflow: hidden;
       display: flex;
@@ -276,13 +267,13 @@
     }
 
     .clip.active {
-      border-color: #fff;
+      border-color: var(--accent-blue);
       background: var(--timeline-clip-active);
     }
 
-    /* CONTROL PANELS / BOTTOM MENU */
+    /* CONTROL PANELS */
     .controls-panel {
-      height: 180px;
+      height: 170px;
       background: var(--bg-panel);
       border-top: 1px solid var(--border-color);
       display: flex;
@@ -297,19 +288,21 @@
     }
 
     .tab-btn {
-      padding: 10px 16px;
-      font-size: 12px;
+      padding: 10px 14px;
+      font-size: 11px;
       font-weight: 600;
       color: var(--text-sub);
       background: transparent;
       border: none;
       cursor: pointer;
       white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .tab-btn.active {
       color: var(--text-main);
-      border-bottom: 2px solid var(--text-main);
+      border-bottom: 2px solid var(--accent-blue);
     }
 
     .tab-content {
@@ -324,14 +317,14 @@
     }
 
     .control-group {
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .control-group label {
       display: block;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-sub);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -340,15 +333,15 @@
       width: 100%;
       -webkit-appearance: none;
       background: var(--bg-card);
-      height: 6px;
-      border-radius: 3px;
+      height: 4px;
+      border-radius: 2px;
       outline: none;
     }
 
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background: var(--text-main);
       cursor: pointer;
@@ -365,8 +358,8 @@
       border: 1px solid var(--border-color);
       color: var(--text-main);
       padding: 8px;
-      border-radius: 8px;
-      font-size: 11px;
+      border-radius: 6px;
+      font-size: 10px;
       font-weight: 600;
       cursor: pointer;
       text-align: center;
@@ -376,7 +369,6 @@
       background: var(--bg-hover);
     }
 
-    /* HIDDEN VIDEO FOR DECODING */
     video {
       display: none !important;
     }
@@ -389,7 +381,7 @@
   <div id="home-screen">
     <div class="home-header">
       <div class="home-title">Proyectos</div>
-      <button class="btn-create" onclick="createNewProject()">+ Nuevo Proyecto</button>
+      <button class="btn-create" onclick="createNewProject()">+ Nuevo</button>
     </div>
     <div class="projects-grid" id="projects-grid"></div>
   </div>
@@ -397,9 +389,9 @@
   <!-- EDITOR SCREEN -->
   <div id="editor-screen">
     <div class="editor-header">
-      <button class="icon-btn" onclick="exitToHome()">✕</button>
-      <div style="font-size: 14px; font-weight: 600;" id="project-title-display">Proyecto sin título</div>
-      <button class="icon-btn" onclick="exportVideo()">↑</button>
+      <button class="icon-btn" onclick="exitToHome()">VOLVER</button>
+      <div style="font-size: 12px; font-weight: 600;" id="project-title-display">Proyecto</div>
+      <button class="icon-btn" onclick="exportVideo()" style="color: var(--accent-blue);">EXPORTAR</button>
     </div>
 
     <div class="preview-container">
@@ -410,38 +402,49 @@
 
     <div class="timeline-container">
       <div class="timeline-toolbar">
-        <button class="icon-btn" id="play-btn" onclick="togglePlay()">▶</button>
+        <button class="icon-btn" id="play-btn" onclick="togglePlay()">PLAY</button>
         <div class="time-code" id="time-display">00:00.00</div>
-        <button class="icon-btn" onclick="triggerFileInput()">+</button>
+        <button class="icon-btn" onclick="triggerFileInput()">+ MEDIA</button>
       </div>
       <div class="playhead"></div>
-      <div class="timeline-tracks" id="timeline-tracks" onscroll="handleTimelineScroll()">
+      <div class="timeline-tracks" id="timeline-tracks">
         <div class="track" id="video-track"></div>
       </div>
     </div>
 
     <div class="controls-panel">
       <div class="control-tabs">
-        <button class="tab-btn active" onclick="switchTab('edit')">Editar</button>
-        <button class="tab-btn" onclick="switchTab('effects')">Efectos (Alight)</button>
-        <button class="tab-btn" onclick="switchTab('twixtor')">Twixtor / Velocidad</button>
+        <button class="tab-btn active" onclick="switchTab('edit')">Edición</button>
+        <button class="tab-btn" onclick="switchTab('shapes')">Formas</button>
+        <button class="tab-btn" onclick="switchTab('effects')">Efectos</button>
+        <button class="tab-btn" onclick="switchTab('twixtor')">Twixtor</button>
         <button class="tab-btn" onclick="switchTab('transform')">Transformar</button>
       </div>
 
       <!-- EDIT TAB -->
       <div class="tab-content active" id="tab-edit">
         <div class="btn-grid">
-          <div class="action-btn" onclick="splitClip()">✂ Dividir</div>
-          <div class="action-btn" onclick="deleteClip()">🗑 Eliminar</div>
-          <div class="action-btn" onclick="duplicateClip()">📋 Duplicar</div>
-          <div class="action-btn" onclick="triggerFileInput()">📁 Añadir Clip</div>
+          <div class="action-btn" onclick="splitClip()">SEPARAR</div>
+          <div class="action-btn" onclick="deleteClip()">ELIMINAR</div>
+          <div class="action-btn" onclick="duplicateClip()">DUPLICAR</div>
+          <div class="action-btn" onclick="triggerFileInput()">CARGAR</div>
+        </div>
+      </div>
+
+      <!-- SHAPES TAB -->
+      <div class="tab-content" id="tab-shapes">
+        <div class="btn-grid">
+          <div class="action-btn" onclick="addShape('rect')">RECTÁNGULO</div>
+          <div class="action-btn" onclick="addShape('circle')">CÍRCULO</div>
+          <div class="action-btn" onclick="addShape('star')">ESTRELLA</div>
+          <div class="action-btn" onclick="addText()">TEXTO</div>
         </div>
       </div>
 
       <!-- EFFECTS TAB -->
       <div class="tab-content" id="tab-effects">
         <div class="control-group">
-          <label>Desenfoque (Blur)</label>
+          <label>Desenfoque</label>
           <input type="range" class="slider" min="0" max="20" value="0" id="effect-blur" oninput="updateEffects()">
         </div>
         <div class="control-group">
@@ -454,16 +457,12 @@
         </div>
       </div>
 
-      <!-- TWIXTOR / SPEED TAB -->
+      <!-- TWIXTOR TAB -->
       <div class="tab-content" id="tab-twixtor">
         <div class="control-group">
-          <label>Velocidad de Reproducción</label>
+          <label>Velocidad (Twixtor Blend)</label>
           <input type="range" class="slider" min="0.1" max="2" step="0.05" value="1" id="speed-slider" oninput="updateSpeed()">
-          <div style="font-size: 11px; color: var(--text-sub); margin-top: 4px;" id="speed-val">1.0x</div>
-        </div>
-        <div class="control-group">
-          <label>Interpolación Suave (Twixtor Blending)</label>
-          <input type="checkbox" id="twixtor-toggle" checked onchange="updateTwixtor()">
+          <div style="font-size: 10px; color: var(--text-sub); margin-top: 4px;" id="speed-val">1.0x</div>
         </div>
       </div>
 
@@ -489,11 +488,10 @@
   let projects = [];
   let currentProject = null;
   let isPlaying = false;
-  let currentTime = 0;
   let duration = 0;
   let animationFrameId = null;
+  let shapes = [];
 
-  // Clip Settings
   let clipData = {
     speed: 1.0,
     twixtor: true,
@@ -508,11 +506,9 @@
   const canvas = document.getElementById('main-canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   
-  // Buffer Canvas for Twixtor Frame Blending
   const bufferCanvas = document.createElement('canvas');
   const bufferCtx = bufferCanvas.getContext('2d');
 
-  // Prevent Native Fullscreen on Mobile Safari / iOS
   video.addEventListener('webkitbeginfullscreen', (e) => e.preventDefault());
   video.addEventListener('webkitendfullscreen', (e) => e.preventDefault());
 
@@ -523,9 +519,7 @@
 
   function loadProjects() {
     const saved = localStorage.getItem('am_projects');
-    projects = saved ? JSON.parse(saved) : [
-      { id: '1', name: 'Mi Edit 01', date: 'Hoy' }
-    ];
+    projects = saved ? JSON.parse(saved) : [{ id: '1', name: 'Proyecto 01', date: 'Hoy' }];
   }
 
   function saveProjects() {
@@ -540,7 +534,7 @@
       card.className = 'project-card';
       card.onclick = () => openProject(p);
       card.innerHTML = `
-        <div class="project-thumb">🎬</div>
+        <div class="project-thumb">PREVIEW</div>
         <div class="project-name">${p.name}</div>
       `;
       grid.appendChild(card);
@@ -550,7 +544,7 @@
   function createNewProject() {
     const newProj = {
       id: Date.now().toString(),
-      name: `Edit ${projects.length + 1}`,
+      name: `Proyecto ${projects.length + 1}`,
       date: 'Ahora'
     };
     projects.push(newProj);
@@ -578,10 +572,9 @@
     const container = document.querySelector('.preview-container');
     const h = container.clientHeight - 20;
     const w = (h * 9) / 16;
-    
     wrapper.style.width = `${w}px`;
     wrapper.style.height = `${h}px`;
-    canvas.width = w * 2; // High DPI
+    canvas.width = w * 2;
     canvas.height = h * 2;
     bufferCanvas.width = canvas.width;
     bufferCanvas.height = canvas.height;
@@ -594,11 +587,9 @@
   function handleFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     const url = URL.createObjectURL(file);
     video.src = url;
     video.load();
-
     video.onloadedmetadata = () => {
       duration = video.duration;
       renderTimelineClip(file.name);
@@ -618,16 +609,12 @@
 
   function togglePlay() {
     if (!video.src) return;
-    if (isPlaying) {
-      pause();
-    } else {
-      play();
-    }
+    if (isPlaying) pause(); else play();
   }
 
   function play() {
     isPlaying = true;
-    document.getElementById('play-btn').innerText = '⏸';
+    document.getElementById('play-btn').innerText = 'PAUSE';
     video.playbackRate = clipData.speed;
     video.play();
     loop();
@@ -635,7 +622,7 @@
 
   function pause() {
     isPlaying = false;
-    document.getElementById('play-btn').innerText = '▶';
+    document.getElementById('play-btn').innerText = 'PLAY';
     video.pause();
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
   }
@@ -648,36 +635,48 @@
   }
 
   function renderFrame() {
-    if (!video.videoWidth) return;
-
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Apply Transformations
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.scale(clipData.scale, clipData.scale);
-    ctx.rotate((clipData.rotate * Math.PI) / 180);
+    if (video.videoWidth) {
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.scale(clipData.scale, clipData.scale);
+      ctx.rotate((clipData.rotate * Math.PI) / 180);
 
-    // Apply Effects via Filter
-    ctx.filter = `blur(${clipData.blur}px) brightness(${clipData.brightness}%) contrast(${clipData.contrast}%)`;
+      ctx.filter = `blur(${clipData.blur}px) brightness(${clipData.brightness}%) contrast(${clipData.contrast}%)`;
 
-    // Twixtor Frame Blending rendering logic
-    if (clipData.speed < 1.0 && clipData.twixtor) {
-      // Blend current video frame with previous buffer
-      bufferCtx.globalAlpha = 0.4;
-      bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
-      
-      ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-      ctx.globalAlpha = 0.3;
-      ctx.drawImage(bufferCanvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-      ctx.globalAlpha = 1.0;
-    } else {
-      ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-      bufferCtx.globalAlpha = 1.0;
-      bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
+      if (clipData.speed < 1.0) {
+        bufferCtx.globalAlpha = 0.4;
+        bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
+        ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.globalAlpha = 0.3;
+        ctx.drawImage(bufferCanvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.globalAlpha = 1.0;
+      } else {
+        ctx.drawImage(video, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        bufferCtx.globalAlpha = 1.0;
+        bufferCtx.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
+      }
     }
-
     ctx.restore();
+
+    shapes.forEach(s => {
+      ctx.save();
+      ctx.fillStyle = '#3b82f6';
+      if (s.type === 'rect') {
+        ctx.fillRect(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 4);
+      } else if (s.type === 'circle') {
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (s.type === 'text') {
+        ctx.font = 'bold 36px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('TEXTO', canvas.width / 2, canvas.height / 2);
+      }
+      ctx.restore();
+    });
   }
 
   function updateTimeDisplay() {
@@ -691,7 +690,6 @@
   function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
     event.target.classList.add('active');
     document.getElementById(`tab-${tabId}`).classList.add('active');
   }
@@ -701,10 +699,6 @@
     clipData.speed = val;
     document.getElementById('speed-val').innerText = `${val.toFixed(2)}x`;
     if (isPlaying) video.playbackRate = val;
-  }
-
-  function updateTwixtor() {
-    clipData.twixtor = document.getElementById('twixtor-toggle').checked;
   }
 
   function updateEffects() {
@@ -720,23 +714,20 @@
     renderFrame();
   }
 
-  function splitClip() {
-    alert("Clip dividido en el punto actual.");
+  function addShape(type) {
+    shapes.push({ type });
+    renderFrame();
   }
 
-  function deleteClip() {
-    video.src = "";
-    document.getElementById('video-track').innerHTML = "";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function addText() {
+    shapes.push({ type: 'text' });
+    renderFrame();
   }
 
-  function duplicateClip() {
-    alert("Clip duplicado.");
-  }
-
-  function exportVideo() {
-    alert("Iniciando renderizado MP4 con aceleración de hardware...");
-  }
+  function splitClip() { alert("Clip separado."); }
+  function deleteClip() { video.src = ""; shapes = []; document.getElementById('video-track').innerHTML = ""; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  function duplicateClip() { alert("Clip duplicado."); }
+  function exportVideo() { alert("Exportando..."); }
 
   window.addEventListener('resize', resizeCanvas);
   window.onload = init;
